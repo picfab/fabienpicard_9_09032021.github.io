@@ -1,4 +1,24 @@
-export default {
+const firebase = {
+  add: async (bill)=>{
+    const res = await firebase.get()
+
+    const data = [...res.data, {
+      "id": Date.now,
+      "vat": "80",
+      "fileUrl": "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a",
+      "status": "pending",
+      "type": "Hôtel et logement",
+      "commentary": "séminaire billed",
+      "name": "encore",
+      "fileName": "preview-facture-free-201801-pdf-1.jpg",
+      "date": "2004-04-04",
+      "amount": 400,
+      "commentAdmin": "ok",
+      "email": bill.mail,
+      "pct": 20
+    }]
+    return Promise.resolve({data})
+  },
   get: () => {
     return Promise.resolve({
       data: [{
@@ -13,7 +33,7 @@ export default {
         "date": "2004-04-04",
         "amount": 400,
         "commentAdmin": "ok",
-        "email": "a@a",
+        "email": "b@b",
         "pct": 20
       },
       {
@@ -64,3 +84,5 @@ export default {
     })
   }
 }
+
+export default firebase

@@ -9,6 +9,7 @@ export default (height) => {
       user = JSON.parse(user)
     }
     if (user && user.type === 'Employee') {
+
       return (
         `
         <div class='vertical-navbar' style='height: ${height}vh;'>
@@ -24,7 +25,7 @@ export default (height) => {
           </div>
       </div>
         `
-      ) 
+      )
     } else {
       return (
         `

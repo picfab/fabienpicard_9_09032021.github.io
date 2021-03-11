@@ -89,6 +89,7 @@ export default class {
     if (this.counter === undefined || this.id !== bill.id) this.counter = 0
     if (this.id === undefined || this.id !== bill.id) this.id = bill.id
     if (this.counter % 2 === 0) {
+
       bills.forEach(b => {
         $(`#open-bill${b.id}`).css({ background: '#0D5AE5' })
       })
@@ -97,12 +98,14 @@ export default class {
       $('.vertical-navbar').css({ height: '150vh' })
       this.counter ++
     } else {
+
       $(`#open-bill${bill.id}`).css({ background: '#0D5AE5' })
 
       $('.dashboard-right-container div').html(`
         <div id="big-billed-icon"> ${BigBilledIcon} </div>
       `)
       $('.vertical-navbar').css({ height: '120vh' })
+
       this.counter ++
     }
     $('#icon-eye-d').click(this.handleClickIconEye)
@@ -146,6 +149,8 @@ export default class {
     }
 
     bills.forEach(bill => {
+      // modif fab supprimer l'event click avant d'en rajouter un autre pour éviter un event double
+      $(`#open-bill${bill.id}`).off('click')
       $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
     })
 
@@ -172,7 +177,7 @@ export default class {
       .catch(console.log)
     }
   }
-    
+
   // not need to cover this function by tests
   updateBill = (bill) => {
     if (this.firestore) {

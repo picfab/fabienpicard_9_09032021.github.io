@@ -3,11 +3,16 @@ import { formatDate, formatStatus } from "../app/format.js"
 import Logout from "./Logout.js"
 
 export default class {
+
   constructor({ document, onNavigate, firestore, localStorage }) {
+    // console.log('BILLS', document, onNavigate, firestore, localStorage);
+
     this.document = document
     this.onNavigate = onNavigate
     this.firestore = firestore
+
     const buttonNewBill = document.querySelector(`button[data-testid="btn-new-bill"]`)
+
     if (buttonNewBill) buttonNewBill.addEventListener('click', this.handleClickNewBill)
     const iconEye = document.querySelectorAll(`div[data-testid="icon-eye"]`)
     if (iconEye) iconEye.forEach(icon => {

@@ -59,7 +59,7 @@ export default () => {
       })
     }
   }
-  
+
   window.onpopstate = (e) => {
     const user = JSON.parse(localStorage.getItem('user'))
     if (window.location.pathname === "/" && !user) {
@@ -75,7 +75,9 @@ export default () => {
     new Login({ document, localStorage, onNavigate, PREVIOUS_LOCATION, firestore })
     document.body.style.backgroundColor="#0E5AE5"
   } else if (window.location.hash !== "") {
+
     if (window.location.hash === ROUTES_PATH['Bills']) {
+
       rootDiv.innerHTML = ROUTES({ pathname: window.location.hash, loading: true })
       const divIcon1 = document.getElementById('layout-icon1')
       const divIcon2 = document.getElementById('layout-icon2')
@@ -113,4 +115,4 @@ export default () => {
 
   return null
 }
- 
+

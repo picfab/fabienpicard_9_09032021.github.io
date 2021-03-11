@@ -11,6 +11,7 @@ export default class NewBill {
     formNewBill.addEventListener("submit", this.handleSubmit)
     const file = this.document.querySelector(`input[data-testid="file"]`)
     file.addEventListener("change", this.handleChangeFile)
+    this.file = file
     this.fileUrl = null
     this.fileName = null
     new Logout({ document, localStorage, onNavigate })
@@ -19,16 +20,27 @@ export default class NewBill {
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
-    this.firestore
-      .storage
-      .ref(`justificatifs/${fileName}`)
-      .put(file)
-      .then(snapshot => snapshot.ref.getDownloadURL())
-      .then(url => {
-        this.fileUrl = url
-        this.fileName = fileName
-      })
+    // modif fab
+    const authFile = ["image/png", "image/jpeg","image/jpg"]
+    if (authFile.includes(file.type)){
+    //modif fab end
+      this.firestore
+        .storage
+        .ref(`justificatifs/${fileName}`)
+        .put(file)
+        .then(snapshot => snapshot.ref.getDownloadURL())
+        .then(url => {
+          this.fileUrl = url
+          this.fileName = fileName
+        })
+    }else{
+      //modif fab
+      window.alert('Seul les jpg, jpeg et png sont authorisés')
+      this.file.value = null
+      //modif fab
+    }
   }
+
   handleSubmit = e => {
     e.preventDefault()
     const email = JSON.parse(localStorage.getItem("user")).email
