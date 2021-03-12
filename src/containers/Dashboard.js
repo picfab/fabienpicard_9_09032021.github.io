@@ -108,9 +108,11 @@ export default class {
 
       this.counter ++
     }
-    $('#icon-eye-d').click(this.handleClickIconEye)
-    $('#btn-accept-bill').click((e) => this.handleAcceptSubmit(e, bill))
-    $('#btn-refuse-bill').click((e) => this.handleRefuseSubmit(e, bill))
+    //modif Fab
+    // suppression .click qui est déprecié
+    $('#icon-eye-d').on('click',this.handleClickIconEye)
+    $('#btn-accept-bill').on('click',(e) => this.handleAcceptSubmit(e, bill))
+    $('#btn-refuse-bill').on('click',(e) => this.handleRefuseSubmit(e, bill))
   }
 
   handleAcceptSubmit = (e, bill) => {
@@ -119,8 +121,10 @@ export default class {
       status: 'accepted',
       commentAdmin: $('#commentary2').val()
     }
-    this.updateBill(newBill)
-    this.onNavigate(ROUTES_PATH['Dashboard'])
+    //modif Fab
+    // lancer this.onNavigate après la réponse de this.updateBill
+    this.updateBill(newBill).then(() => this.onNavigate(ROUTES_PATH['Dashboard']))
+
   }
 
   handleRefuseSubmit = (e, bill) => {
@@ -129,8 +133,9 @@ export default class {
       status: 'refused',
       commentAdmin: $('#commentary2').val()
     }
-    this.updateBill(newBill)
-    this.onNavigate(ROUTES_PATH['Dashboard'])
+    //modif Fab
+    // lancer this.onNavigate après la réponse de this.updateBill
+    this.updateBill(newBill).then(() => this.onNavigate(ROUTES_PATH['Dashboard']))
   }
 
   handleShowTickets(e, bills, index) {
@@ -150,8 +155,9 @@ export default class {
 
     bills.forEach(bill => {
       // modif fab supprimer l'event click avant d'en rajouter un autre pour éviter un event double
+      // suppression .click qui est déprecié
       $(`#open-bill${bill.id}`).off('click')
-      $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
+      $(`#open-bill${bill.id}`).on('click',(e) => this.handleEditTicket(e, bill, bills))
     })
 
     return bills

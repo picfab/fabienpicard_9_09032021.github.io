@@ -3,10 +3,11 @@ import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 import userEvent from '@testing-library/user-event'
 import { localStorageMock } from "../__mocks__/localStorage.js"
-import { ROUTES, ROUTES_PATH } from "../constants/routes"
+import { ROUTES } from "../constants/routes"
 import firebase from "../__mocks__/firebase"
+import BillsUI from "../views/BillsUI.js"
 
-jest.mock('firestore')
+jest.mock('../app/firestore')
 
 const uploadFileIsAllow = (typeFile,isAuth)=>{
   // to-do write assertion
@@ -15,7 +16,7 @@ const uploadFileIsAllow = (typeFile,isAuth)=>{
   window.localStorage.setItem('user', JSON.stringify({
     type: 'Admin'
   }))
-  window.alert = ()=>console.log('Seul les jpg, jpeg et png sont authorisés')
+  window.alert = ()=> null
   const firestore = {
     storage: {
       ref: jest.fn(() => firestore),
@@ -106,45 +107,30 @@ describe("Given I am connected as an employee (png,jpg or jpeg)", () => {
       mail:'b@b'
     }
     const bills = await firebase.add(bill)
-    console.log(bills.data.length);
     expect(getSpy).toHaveBeenCalledTimes(1)
     expect(bills.data.length).toBe(5)
     const userEmail = 'b@b'
     const userBills = bills.data.filter(bill => bill.email === userEmail)
     expect(userBills.length).toBe(2)
   })
-  // test("fetches bills from an API and fails with 404 message error", async () => {
-  //   firebase.get.mockImplementationOnce(() =>
-  //     Promise.reject(new Error("Erreur 404"))
-  //   )
-  //   const html = DashboardUI({ error: "Erreur 404" })
-  //   document.body.innerHTML = html
-  //   const message = await screen.getByText(/Erreur 404/)
-  //   expect(message).toBeTruthy()
-  // })
-  // test("fetches messages from an API and fails with 500 message error", async () => {
-  //   firebase.get.mockImplementationOnce(() =>
-  //     Promise.reject(new Error("Erreur 500"))
-  //   )
-  //   const html = DashboardUI({ error: "Erreur 500" })
-  //   document.body.innerHTML = html
-  //   const message = await screen.getByText(/Erreur 500/)
-  //   expect(message).toBeTruthy()
-  // })
+
+  test("fetches create bills from mock API ADD and fails with 404 message error", async () => {
+    firebase.add.mockImplementationOnce(() =>
+      Promise.reject(new Error("Erreur 404"))
+    )
+    const html = BillsUI({ error: "Erreur 404" })
+    document.body.innerHTML = html
+    const message = await screen.getByText(/Erreur 404/)
+    expect(message).toBeTruthy()
+  })
+
+  test("fetches create bills from mock API ADD and fails with 500 message error", async () => {
+    firebase.add.mockImplementationOnce(() =>
+      Promise.reject(new Error("Erreur 500"))
+    )
+    const html = BillsUI({ error: "Erreur 500" })
+    document.body.innerHTML = html
+    const message = await screen.getByText(/Erreur 500/)
+    expect(message).toBeTruthy()
+  })
 })
-
-
-
-
-// not need to cover this function by tests
-// createBill = (bill) => {
-//   if (this.firestore) {
-//     this.firestore
-//       .bills()
-//       .add(bill)
-//       .then(() => {
-//         this.onNavigate(ROUTES_PATH['Bills'])
-//       })
-//       .catch(error => error)
-//   }
-// }

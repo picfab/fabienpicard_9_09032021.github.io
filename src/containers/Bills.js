@@ -5,7 +5,6 @@ import Logout from "./Logout.js"
 export default class {
 
   constructor({ document, onNavigate, firestore, localStorage }) {
-    // console.log('BILLS', document, onNavigate, firestore, localStorage);
 
     this.document = document
     this.onNavigate = onNavigate
@@ -35,7 +34,7 @@ export default class {
   // not need to cover this function by tests
   getBills = () => {
     const userEmail = localStorage.getItem('user') ?
-      JSON.parse(localStorage.getItem('user')).email : ""
+    JSON.parse(localStorage.getItem('user')).email : ""
     if (this.firestore) {
       return this.firestore
       .bills()

@@ -92,7 +92,6 @@ describe("Given that I am a user on login page", () => {
     form.addEventListener("submit", handleSubmit)
     fireEvent.submit(form)
       expect(handleSubmit).toHaveBeenCalled()
-      console.log(inputData,'inputDatainputDatainputData');
       expect(window.localStorage.setItem).toHaveBeenCalled()
       expect(window.localStorage.setItem).toHaveBeenCalledWith(
         "user",
@@ -221,7 +220,6 @@ describe("Given that I am a user on login page", () => {
       })
 
     test("It should renders HR dashboard page", () => {
-      console.log(screen);
       expect(screen.queryByText('Validations')).toBeTruthy()
     })
 
