@@ -21,7 +21,6 @@ export default class NewBill {
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
     // modif fab
-    console.log(file, file.type);
     const authFile = ["image/png", "image/jpeg","image/jpg"]
     if (authFile.includes(file.type)){
     //modif fab end

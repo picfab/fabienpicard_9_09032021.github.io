@@ -1,6 +1,8 @@
 {
   "scripts": {
-    "test": "jest --coverage --noStackTrace --silent"
+    "test": "jest --coverage --noStackTrace --silent",
+    "test-views": "jest --findRelatedTests src/views/Actions.js src/views/BillsUI.js src/views/DashboardFormUI.js src/views/DashboardUI.js src/views/ErrorPage.js src/views/LoadingPage.js src/views/LoginUI.js src/views/NewBillUI.js src/views/VerticalLayout.js",
+    "test-containers": "jest --findRelatedTests src/containers/Bills.js src/containers/Dashboard.js src/containers/Login.js src/containers/Logout.js src/containers/NewBill.js"
   },
   "jest": {
     "verbose": false,

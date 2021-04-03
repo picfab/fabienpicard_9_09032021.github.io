@@ -53,9 +53,9 @@ describe("Given I am connected as an employee", () => {
       })
 
       test("Then employee are on error page", () => {
-        const html = BillsUI({ data: [],error:true })
+        const html = BillsUI({ data: [],error:'Test erreur' })
         document.body.innerHTML = html
-        const message = screen.getByTestId('error-message')
+        const message = screen.getByText(/Test erreur/)
         expect(message).toBeTruthy()
       })
 

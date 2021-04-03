@@ -10,7 +10,6 @@ import BillsUI from "../views/BillsUI.js"
 jest.mock('../app/firestore')
 
 const uploadFileIsAllow = (typeFile,isAuth)=>{
-  // to-do write assertion
   let fileIsAllow = false
   Object.defineProperty(window, 'localStorage', { value: localStorageMock })
   window.localStorage.setItem('user', JSON.stringify({
@@ -39,12 +38,13 @@ const uploadFileIsAllow = (typeFile,isAuth)=>{
   expect(handleChangeFile).toHaveBeenCalled()
   expect(fileIsAllow).toEqual(isAuth)
 }
-describe("Given I am connected as an employee (png,jpg or jpeg)", () => {
+
+describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
     const html = NewBillUI()
     document.body.innerHTML = html
 
-    test("Then handleChangeFile is good file", async () => {
+    test("Then handleChangeFile is good file  (png,jpg or jpeg)", async () => {
       uploadFileIsAllow('image/jpg', true)
     })
 
@@ -97,40 +97,52 @@ describe("Given I am connected as an employee (png,jpg or jpeg)", () => {
       const findText = screen.getByText('Mes notes de frais')
       expect(findText).toBeTruthy()
     })
-  })
 
 
+    // POST
+    describe("When I send a NewBill", () => {
+      test("fetches create bills from mock API ADD", async () => {
+        const getSpy = jest.spyOn(firebase, "add")
+        const bill = {
+          mail:'b@b'
+        }
+        const bills = await firebase.add(bill)
+        expect(getSpy).toHaveBeenCalledTimes(1)
+        expect(bills.data.length).toBe(5)
+        const userEmail = 'b@b'
+        const userBills = bills.data.filter(bill => bill.email === userEmail)
+        expect(userBills.length).toBe(2)
+      })
 
-  test("fetches create bills from mock API ADD", async () => {
-    const getSpy = jest.spyOn(firebase, "add")
-    const bill = {
-      mail:'b@b'
-    }
-    const bills = await firebase.add(bill)
-    expect(getSpy).toHaveBeenCalledTimes(1)
-    expect(bills.data.length).toBe(5)
-    const userEmail = 'b@b'
-    const userBills = bills.data.filter(bill => bill.email === userEmail)
-    expect(userBills.length).toBe(2)
-  })
+      test("fetches create bills from mock API ADD and fails with 404 message error", async () => {
+        firebase.add.mockImplementationOnce(() =>
+          Promise.reject(new Error("Erreur 404"))
+        )
+        const html = BillsUI({ error: "Erreur 404" })
+        document.body.innerHTML = html
+        const message = await screen.getByText(/Erreur 404/)
+        expect(message).toBeTruthy()
+      })
 
-  test("fetches create bills from mock API ADD and fails with 404 message error", async () => {
-    firebase.add.mockImplementationOnce(() =>
-      Promise.reject(new Error("Erreur 404"))
-    )
-    const html = BillsUI({ error: "Erreur 404" })
-    document.body.innerHTML = html
-    const message = await screen.getByText(/Erreur 404/)
-    expect(message).toBeTruthy()
-  })
+      test("fetches create bills from mock API ADD and fails with 300 message error", async () => {
+        firebase.add.mockImplementationOnce(() =>
+          Promise.reject(new Error("Erreur 300"))
+        )
+        const html = BillsUI({ error: "Erreur 300" })
+        document.body.innerHTML = html
+        const message = await screen.getByText(/Erreur 300/)
+        expect(message).toBeTruthy()
+      })
 
-  test("fetches create bills from mock API ADD and fails with 500 message error", async () => {
-    firebase.add.mockImplementationOnce(() =>
-      Promise.reject(new Error("Erreur 500"))
-    )
-    const html = BillsUI({ error: "Erreur 500" })
-    document.body.innerHTML = html
-    const message = await screen.getByText(/Erreur 500/)
-    expect(message).toBeTruthy()
+      test("fetches create bills from mock API ADD and fails with 500 message error", async () => {
+        firebase.add.mockImplementationOnce(() =>
+          Promise.reject(new Error("Erreur 500"))
+        )
+        const html = BillsUI({ error: "Erreur 500" })
+        document.body.innerHTML = html
+        const message = await screen.getByText(/Erreur 500/)
+        expect(message).toBeTruthy()
+      })
+    })
   })
 })

@@ -31,7 +31,7 @@ export const card = (bill) => {
   const firstName = firstAndLastNames.includes('.') ?
     firstAndLastNames.split('.')[0] : ''
   const lastName = firstAndLastNames.includes('.') ?
-  firstAndLastNames.split('.')[1] : firstAndLastNames
+    firstAndLastNames.split('.')[1] : firstAndLastNames
 
   return (`
     <div class='bill-card' id='open-bill${bill.id}' data-testid='open-bill${bill.id}'>
@@ -69,11 +69,12 @@ export const getStatus = (index) => {
 export default class {
   constructor({ document, onNavigate, firestore, bills, localStorage }) {
     this.document = document
-    this.onNavigate = onNavigate
+    this.onNavigate = (route)=>onNavigate(route)
+
     this.firestore = firestore
-    $('#arrow-icon1').click((e) => this.handleShowTickets(e, bills, 1))
-    $('#arrow-icon2').click((e) => this.handleShowTickets(e, bills, 2))
-    $('#arrow-icon3').click((e) => this.handleShowTickets(e, bills, 3))
+    $('#arrow-icon1').on('click',(e) => this.handleShowTickets(e, bills, 1))
+    $('#arrow-icon2').on('click',(e) => this.handleShowTickets(e, bills, 2))
+    $('#arrow-icon3').on('click',(e) => this.handleShowTickets(e, bills, 3))
     this.getBillsAllUsers()
     new Logout({ localStorage, onNavigate })
   }
@@ -96,7 +97,7 @@ export default class {
       $(`#open-bill${bill.id}`).css({ background: '#2A2B35' })
       $('.dashboard-right-container div').html(DashboardFormUI(bill))
       $('.vertical-navbar').css({ height: '150vh' })
-      this.counter ++
+      this.counter++
     } else {
 
       $(`#open-bill${bill.id}`).css({ background: '#0D5AE5' })
@@ -106,13 +107,12 @@ export default class {
       `)
       $('.vertical-navbar').css({ height: '120vh' })
 
-      this.counter ++
+      this.counter++
     }
-    //modif Fab
-    // suppression .click qui est déprecié
-    $('#icon-eye-d').on('click',this.handleClickIconEye)
-    $('#btn-accept-bill').on('click',(e) => this.handleAcceptSubmit(e, bill))
-    $('#btn-refuse-bill').on('click',(e) => this.handleRefuseSubmit(e, bill))
+
+    $('#icon-eye-d').on('click', this.handleClickIconEye)
+    $('#btn-accept-bill').on('click', (e) => this.handleAcceptSubmit(e, bill))
+    $('#btn-refuse-bill').on('click', (e) => this.handleRefuseSubmit(e, bill))
   }
 
   handleAcceptSubmit = (e, bill) => {
@@ -121,10 +121,9 @@ export default class {
       status: 'accepted',
       commentAdmin: $('#commentary2').val()
     }
-    //modif Fab
-    // lancer this.onNavigate après la réponse de this.updateBill
-    this.updateBill(newBill).then(() => this.onNavigate(ROUTES_PATH['Dashboard']))
-
+    // modif fab : Attendre la réponse de updateBill
+    this.updateBill(newBill)
+      .then(() => this.onNavigate(ROUTES_PATH['Dashboard']))
   }
 
   handleRefuseSubmit = (e, bill) => {
@@ -133,31 +132,30 @@ export default class {
       status: 'refused',
       commentAdmin: $('#commentary2').val()
     }
-    //modif Fab
-    // lancer this.onNavigate après la réponse de this.updateBill
-    this.updateBill(newBill).then(() => this.onNavigate(ROUTES_PATH['Dashboard']))
+    // modif fab : Attendre la réponse de updateBill
+    this.updateBill(newBill)
+      .then(() => this.onNavigate(ROUTES_PATH['Dashboard']))
   }
 
   handleShowTickets(e, bills, index) {
     if (this.counter === undefined || this.index !== index) this.counter = 0
     if (this.index === undefined || this.index !== index) this.index = index
     if (this.counter % 2 === 0) {
-      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)'})
+      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)' })
       $(`#status-bills-container${this.index}`)
         .html(cards(filteredBills(bills, getStatus(this.index))))
-      this.counter ++
+      this.counter++
     } else {
-      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)'})
+      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)' })
       $(`#status-bills-container${this.index}`)
         .html("")
-      this.counter ++
+      this.counter++
     }
 
     bills.forEach(bill => {
       // modif fab supprimer l'event click avant d'en rajouter un autre pour éviter un event double
-      // suppression .click qui est déprecié
       $(`#open-bill${bill.id}`).off('click')
-      $(`#open-bill${bill.id}`).on('click',(e) => this.handleEditTicket(e, bill, bills))
+      $(`#open-bill${bill.id}`).on('click', (e) => this.handleEditTicket(e, bill, bills))
     })
 
     return bills
@@ -168,30 +166,30 @@ export default class {
   getBillsAllUsers = () => {
     if (this.firestore) {
       return this.firestore
-      .bills()
-      .get()
-      .then(snapshot => {
-        const bills = snapshot.docs
-        .map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          date: doc.data().date,
-          status: doc.data().status
-        }))
-        return bills
-      })
-      .catch(console.log)
+        .bills()
+        .get()
+        .then(snapshot => {
+          const bills = snapshot.docs
+            .map(doc => ({
+              id: doc.id,
+              ...doc.data(),
+              date: doc.data().date,
+              status: doc.data().status
+            }))
+          return bills
+        })
+        .catch(console.log)
     }
   }
 
   // not need to cover this function by tests
-  updateBill = (bill) => {
+  updateBill = (bill) => new Promise((resolve,reject)=>{
     if (this.firestore) {
-    return this.firestore
-      .bill(bill.id)
-      .update(bill)
-      .then(bill => bill)
-      .catch(console.log)
+      return this.firestore
+        .bill(bill.id)
+        .update(bill)
+        .then(bill => resolve (bill))
+        .catch((error)=>(reject(error)))
     }
-  }
+  })
 }
